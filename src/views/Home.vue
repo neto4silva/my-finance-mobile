@@ -25,8 +25,29 @@
       </v-alert>
       <v-container>
         <v-row>
-          <v-col>
-            <v-card>
+          <v-col class="pl-0 pr-0">
+            <v-card class="card-total-mes">
+              <v-card-title class="d-flex align-center">
+                <v-avatar>
+                  <v-img
+                    alt="John"
+                    src="https://cdn.vuetifyjs.com/images/john.jpg"
+                  ></v-img>
+                </v-avatar>
+                <v-spacer/>
+                <span class="ml-3">Maio <v-icon @click="exibirMeses">mdi-chevron-down</v-icon></span>
+                <v-spacer/>
+                <v-avatar/>
+              </v-card-title>
+              <v-card-text>
+                <h2>Total do mês</h2>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="pl-0 pr-0">
+            <v-card class="borda-10-cards">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#FF3EA5"
@@ -96,8 +117,8 @@
         </v-row>
 
         <v-row>
-          <v-col>
-            <v-card>
+          <v-col class="pl-0 pr-0">
+            <v-card class="borda-10-cards">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#4CAF50"
@@ -109,7 +130,7 @@
                 </v-avatar>
                 <h2 class="ml-3">{{ formatarParaReal(totalGanhos) }}</h2>
               </v-card-title>
-              <v-card-text> Ganhos do mês </v-card-text>
+              <v-card-text> Receitas do mês </v-card-text>
               <v-card-subtitle class="pb-5">
                 <strong>18%</strong> maior que o mês anterior
               </v-card-subtitle>
@@ -167,8 +188,8 @@
         </v-row>
 
         <v-row>
-          <v-col>
-            <v-card>
+          <v-col class="pl-0 pr-0">
+            <v-card class="card-gastos-fixos borda-10-cards">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#FCDC2A"
@@ -237,55 +258,33 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <v-row>
-          <v-col>
-            <v-card>
-              <v-card-title class="d-flex align-center">
-                <v-avatar
-                  color="#2196F3"
-                  class="avatar--rounded"
-                  tile
-                  variant="tonal"
-                >
-                  <v-icon>mdi-bank</v-icon>
-                </v-avatar>
-                <span class="ml-3">{{
-                  formatarParaReal(totalGanhosMenosGastos)
-                }}</span>
-              </v-card-title>
-              <v-card-text>
-                <h2>Total do mês</h2>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
       </v-container>
+
 
       <v-dialog v-model="modalAdicionarGanho" persistent max-width="600px">
         <v-card>
-          <v-card-title>Adicionar Ganhos</v-card-title>
+          <v-card-title>Adicionar Receitas</v-card-title>
           <v-card-text>
             <v-text-field
               v-model="novoGanho.data_ganho"
               placeholder="Data do Gasto"
               type="date"
               density="compact"
-              variant="solo-filled"
+              variant="outlined"
             ></v-text-field>
             <v-text-field
               v-model="novoGanho.valor"
               placeholder="Valor"
               type="number"
               density="compact"
-              variant="solo-filled"
+              variant="outlined"
               hide-spin-buttons
             ></v-text-field>
             <v-textarea
               v-model="novoGanho.descricao"
               placeholder="Descrição"
               density="compact"
-              variant="solo-filled"
+              variant="outlined"
               no-resize
             ></v-textarea>
             <v-checkbox v-model="novoGanho.pago" label="Pago"></v-checkbox>
@@ -496,7 +495,9 @@ export default {
 
     async obterListaGastos() {
       try {
-        const response = await axios.get("https://my-finance-neto.azurewebsites.net/api/v1/gastos");
+        const response = await axios.get(
+          "https://my-finance-neto.azurewebsites.net/api/v1/gastos"
+        );
         this.gastos = response.data;
       } catch (error) {
         console.error(error);
@@ -505,7 +506,9 @@ export default {
 
     async obterListaGanhos() {
       try {
-        const response = await axios.get("https://my-finance-neto.azurewebsites.net/api/v1/ganhos");
+        const response = await axios.get(
+          "https://my-finance-neto.azurewebsites.net/api/v1/ganhos"
+        );
         this.ganhos = response.data;
       } catch (error) {
         console.error(error);
@@ -561,6 +564,22 @@ export default {
 <style>
 .card-gastos-mes {
   border-bottom: 3px solid #8c57ff !important;
+}
+
+.card-gastos-fixos {
+  margin-bottom: 60px;
+}
+
+.card-total-mes {
+  margin-top: -15px;
+  width: 398px;
+  margin-left: -5px;
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+.borda-10-cards {
+  border-radius: 10px !important;
 }
 
 .avatar--rounded {
