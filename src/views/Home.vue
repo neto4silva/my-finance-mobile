@@ -178,9 +178,8 @@
                 >
                   <v-icon>mdi-currency-brl</v-icon>
                 </v-avatar>
-                <h2 class="ml-3">{{ formatarParaReal(totalGanhos) }}</h2>
+                <h3 class="ml-3">Receitas do mês</h3>
               </v-card-title>
-              <v-card-text> Receitas do mês </v-card-text>
               <v-card-subtitle class="pb-5">
                 <strong>18%</strong> maior que o mês anterior
               </v-card-subtitle>
@@ -249,10 +248,9 @@
                 >
                   <v-icon>mdi-wallet-outline</v-icon>
                 </v-avatar>
-                <h2 class="ml-3">{{ formatarParaReal(totalGastos) }}</h2>
+                <h3 class="ml-3">Gastos fixos do mês</h3>
                 <v-spacer />
               </v-card-title>
-              <v-card-text> Gastos fixos do mês </v-card-text>
               <v-card-subtitle class="pb-5">
                 <strong>18%</strong> maior que o mês anterior
               </v-card-subtitle>
