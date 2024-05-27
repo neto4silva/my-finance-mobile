@@ -34,10 +34,31 @@
                     src="https://cdn.vuetifyjs.com/images/john.jpg"
                   ></v-img>
                 </v-avatar>
-                <v-spacer/>
-                <span class="ml-3">Maio <v-icon @click="exibirMeses">mdi-chevron-down</v-icon></span>
-                <v-spacer/>
-                <v-avatar/>
+                <v-spacer />
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <v-btn 
+                      color="deep-purple"
+                      variant="outlined"
+                      v-bind="props"
+                    >
+                      {{ mesCorrente }}
+                      <v-icon>mdi-chevron-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item
+                      v-for="(month, index) in meses"
+                      :key="index"
+                      :value="month"
+                      @click="selectMonth(month)"
+                    >
+                      <v-list-item-title>{{ month }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+                <v-spacer />
+                <v-avatar />
               </v-card-title>
               <v-card-text>
                 <h2>Total do mês</h2>
@@ -57,7 +78,7 @@
                 >
                   <v-icon>mdi-cart-outline</v-icon>
                 </v-avatar>
-                <h2 class="ml-3">{{ compras.length }}</h2>
+                <h2 class="ml-3">{{ listaDeCompras.length }}</h2>
               </v-card-title>
               <v-card-text> Compras feitas no mês </v-card-text>
               <v-card-subtitle class="pb-5">
@@ -86,7 +107,7 @@
                   <v-card>
                     <v-data-table
                       :headers="colunasTabelas"
-                      :items="compras"
+                      :items="listaDeCompras"
                       item-key="id"
                       hide-default-header
                       hide-default-footer
@@ -260,7 +281,6 @@
         </v-row>
       </v-container>
 
-
       <v-dialog v-model="modalAdicionarGanho" persistent max-width="600px">
         <v-card>
           <v-card-title>Adicionar Receitas</v-card-title>
@@ -308,14 +328,14 @@
           <v-card-title>Adicionar Compra</v-card-title>
           <v-card-text>
             <v-text-field
-              v-model="novaCompra.data_compra"
+              v-model="compra.data_compra"
               placeholder="Data da compra"
               type="date"
               density="compact"
               variant="solo-filled"
             ></v-text-field>
             <v-text-field
-              v-model="novaCompra.valor"
+              v-model="compra.valor"
               placeholder="Valor"
               type="number"
               density="compact"
@@ -323,7 +343,7 @@
               hide-spin-buttons
             ></v-text-field>
             <v-text-field
-              v-model="novaCompra.parcelas"
+              v-model="compra.parcelas"
               placeholder="Parcelas"
               type="number"
               density="compact"
@@ -331,7 +351,7 @@
               hide-spin-buttons
             ></v-text-field>
             <v-textarea
-              v-model="novaCompra.descricao"
+              v-model="compra.descricao"
               placeholder="Descrição"
               density="compact"
               variant="solo-filled"
@@ -357,6 +377,10 @@
 
 <script>
 import axios from "axios";
+import api from "@/services/api.js";
+import moment from "moment";
+import comprasService from "@/services/compras-services.js";
+import ComprasModel from "@/models/compras-model.js";
 
 export default {
   name: "Home",
@@ -377,7 +401,22 @@ export default {
           value: "parcelas",
         },
       ],
-      compras: [],
+      meses: [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ],
+      mesCorrente: "",
+      listaDeCompras: [],
       gastos: [],
       ganhos: [],
       expandirCompras: false,
@@ -385,18 +424,14 @@ export default {
       expandirGanhos: false,
       modalAdicionarGanho: false,
       modalAdicionarCompra: false,
+      exibirMeses: false,
       novoGanho: {
         data_ganho: undefined,
         valor: undefined,
         descricao: "",
         pago: false,
       },
-      novaCompra: {
-        data_compra: undefined,
-        valor: undefined,
-        descricao: "",
-        parcelas: undefined,
-      },
+      compra: new ComprasModel(),
       alertaSucesso: false,
       alertaErro: false,
       mensagemErro: "",
@@ -431,9 +466,17 @@ export default {
     this.obterListaCompras();
     this.obterListaGastos();
     this.obterListaGanhos();
+
+    const mesCorrenteIndex = new Date().getMonth();
+    this.mesCorrente = this.meses[mesCorrenteIndex];
   },
 
   methods: {
+    selectMonth(month) {
+      console.log("Mês selecionado:", month);
+      this.mesCorrente = month;
+    },
+
     expandirCardCompras() {
       this.expandirCompras = !this.expandirCompras;
       this.obterListaCompras();
@@ -450,46 +493,116 @@ export default {
     },
 
     async obterListaCompras() {
-      try {
-        const response = await axios.get(
-          "https://my-finance-neto.azurewebsites.net/api/v1/compras"
-        );
-        this.compras = response.data;
-      } catch (error) {
-        console.error(error);
-      }
+      comprasService
+        .obterTodas()
+        .then((response) => {
+          this.listaDeCompras = response.data.map((c) => new ComprasModel(c));
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$swal.fire(
+            "Erro",
+            "Ocorreu um erro ao obter os clientes",
+            "error"
+          );
+        });
+    },
+
+    editarCliente() {
+      clienteService
+        .atualizar(this.compra)
+        .then(() => {
+          this.compra = new Cliente();
+          this.obterTodosOsClientes();
+          if (!this.manterAberto) {
+            this.modalAberto = false;
+          }
+          this.$swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Cliente atualizado com sucesso",
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        })
+        .catch((error) => {
+          console.error("Erro ao editar o cliente:", error);
+          this.$swal.fire(
+            "Erro",
+            "Ocorreu um erro ao editar o cliente",
+            "error"
+          );
+        });
+    },
+
+    validarCompra(compra) {
+      return (
+        compra.data_compra &&
+        compra.valor &&
+        compra.descricao &&
+        compra.parcelas
+      );
     },
 
     async adicionarCompra() {
-      try {
-        const dataCompraISO = new Date(
-          this.novaCompra.data_compra
+      if (this.validarCompra(this.compra)) {
+        this.compra.data_compra = moment(
+          this.compra.data_compra,
+          "YYYY-MM-DD"
         ).toISOString();
-        const response = await axios.post(
-          "https://my-finance-neto.azurewebsites.net/api/v1/compras",
-          {
-            data_compra: dataCompraISO,
-            valor: this.novaCompra.valor,
-            descricao: this.novaCompra.descricao,
-            parcelas: this.novaCompra.parcelas,
-          }
+        comprasService
+          .cadastrar(this.compra)
+          .then(() => {
+            this.compra = new ComprasModel();
+            this.obterListaCompras();
+            this.modalAdicionarCompra = false;
+            this.$swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Compra cadastrada com sucesso",
+              showConfirmButton: false,
+              timer: 1000,
+              customClass: {
+                container: "dark-swal-container",
+                popup: "dark-swal-popup",
+                header: "dark-swal-header",
+                title: "dark-swal-title",
+                content: "dark-swal-content",
+                confirmButton: "dark-swal-confirm-button",
+                cancelButton: "dark-swal-cancel-button",
+                actions: "dark-swal-actions",
+                footer: "dark-swal-footer",
+              },
+            });
+          })
+          .catch((error) => {
+            this.modalAdicionarCompra = false;
+            console.error("Erro ao adicionar a compra:", error);
+            this.$swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Erro ao adicionar a compra",
+              showConfirmButton: false,
+              timer: 1000,
+              customClass: {
+                container: "dark-swal-container",
+                popup: "dark-swal-popup",
+                header: "dark-swal-header",
+                title: "dark-swal-title",
+                content: "dark-swal-content",
+                confirmButton: "dark-swal-confirm-button",
+                cancelButton: "dark-swal-cancel-button",
+                actions: "dark-swal-actions",
+                footer: "dark-swal-footer",
+              },
+            });
+          });
+      } else {
+        this.$swal.fire(
+          "Erro",
+          "Por favor, preencha todos os campos obrigatórios",
+          "error"
         );
-        this.modalAdicionarCompra = false;
-        this.novaCompra = {
-          data_compra: undefined,
-          valor: undefined,
-          descricao: "",
-          parcelas: undefined,
-        };
-        await this.obterListaCompras();
-        this.alertaSucesso = true;
-      } catch (error) {
-        console.error("Erro ao adicionar compra:", error);
-        this.modalAdicionarCompra = false;
-        this.mensagemErro = error.response
-          ? error.response.data
-          : "Erro ao adicionar compra";
-        this.alertaErro = true;
       }
     },
 
@@ -572,8 +685,8 @@ export default {
 
 .card-total-mes {
   margin-top: -15px;
-  width: 398px;
-  margin-left: -5px;
+  width: 102%;
+  margin-left: -3px;
   border-bottom-left-radius: 20px !important;
   border-bottom-right-radius: 20px !important;
 }
@@ -584,5 +697,36 @@ export default {
 
 .avatar--rounded {
   border-radius: 6px !important;
+}
+
+/* Estilos para o tema dark do SweetAlert */
+.dark-swal-container {
+  background-color: #333;
+}
+
+.dark-swal-popup {
+  background-color: #333;
+  color: #fff;
+}
+
+.dark-swal-header,
+.dark-swal-title {
+  color: #fff;
+}
+
+.dark-swal-content {
+  color: #ccc;
+}
+
+.dark-swal-confirm-button {
+  background-color: #555;
+}
+
+.dark-swal-cancel-button {
+  background-color: #777;
+}
+
+.dark-swal-footer {
+  color: #ccc;
 }
 </style>
