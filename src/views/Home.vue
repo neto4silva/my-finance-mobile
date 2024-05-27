@@ -81,7 +81,7 @@
                 <v-col>
                   <v-row>
                     <v-avatar color="red" class="avatar-receitas">
-                      <v-icon>mdi-chevron-up</v-icon>
+                      <v-icon>mdi-chevron-down</v-icon>
                     </v-avatar>
                     <v-card-text class="receitas-text">Despesas</v-card-text>
                   </v-row>
