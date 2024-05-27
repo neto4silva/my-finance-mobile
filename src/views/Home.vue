@@ -37,7 +37,7 @@
                 <v-spacer />
                 <v-menu>
                   <template v-slot:activator="{ props }">
-                    <v-btn 
+                    <v-btn
                       color="deep-purple"
                       variant="outlined"
                       v-bind="props"
@@ -60,9 +60,38 @@
                 <v-spacer />
                 <v-avatar />
               </v-card-title>
-              <v-card-text>
-                <h2>Total do mês</h2>
+              <v-card-text align="center">
+                <span>Saldo total</span>
+                <h1>{{ formatarParaReal(totalGanhosMenosGastos) }}</h1>
               </v-card-text>
+              <v-row class="pt-4">
+                <v-col>
+                  <v-row>
+                    <v-avatar color="green" class="avatar-receitas">
+                      <v-icon>mdi-chevron-up</v-icon>
+                    </v-avatar>
+                    <v-card-text class="receitas-text">Receitas</v-card-text>
+                  </v-row>
+                  <v-card-title class="pl-5 pt-0 valor-receitas">
+                    <span style="color: #4caf50">{{
+                      formatarParaReal(totalGanhos)
+                    }}</span>
+                  </v-card-title>
+                </v-col>
+                <v-col>
+                  <v-row>
+                    <v-avatar color="red" class="avatar-receitas">
+                      <v-icon>mdi-chevron-up</v-icon>
+                    </v-avatar>
+                    <v-card-text class="receitas-text">Despesas</v-card-text>
+                  </v-row>
+                  <v-card-title class="pl-5 pt-0 valor-receitas">
+                    <span style="color: #f44336">{{
+                      formatarParaReal(totalGastos)
+                    }}</span>
+                  </v-card-title>
+                </v-col>
+              </v-row>
             </v-card>
           </v-col>
         </v-row>
@@ -691,6 +720,20 @@ export default {
   border-bottom-right-radius: 20px !important;
 }
 
+.receitas-text {
+  margin-top: -15px;
+  margin-left: -10px;
+}
+
+.avatar-receitas {
+  margin-left: 25px;
+}
+
+.valor-receitas {
+  margin-left: 38px;
+  margin-top: -25px;
+}
+
 .borda-10-cards {
   border-radius: 10px !important;
 }
@@ -699,7 +742,6 @@ export default {
   border-radius: 6px !important;
 }
 
-/* Estilos para o tema dark do SweetAlert */
 .dark-swal-container {
   background-color: #333;
 }
