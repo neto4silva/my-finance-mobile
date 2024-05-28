@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col class="pt-6 pb-6">
+    <v-col class="pl-6 pt-6 pb-6">
       <v-btn icon color="#28243d" :to="'/'">
         <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
