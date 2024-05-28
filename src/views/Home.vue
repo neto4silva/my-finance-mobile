@@ -64,32 +64,36 @@
                 <span>Saldo total</span>
                 <h1>{{ formatarParaReal(totalGanhosMenosGastos) }}</h1>
               </v-card-text>
-              <v-row class="pt-4">
+              <v-row>
                 <v-col>
-                  <v-row>
-                    <v-avatar color="green" class="avatar-receitas">
-                      <v-icon>mdi-chevron-up</v-icon>
-                    </v-avatar>
-                    <v-card-text class="receitas-text">Receitas</v-card-text>
-                  </v-row>
-                  <v-card-title class="pl-5 pt-0 valor-receitas">
-                    <span style="color: #4caf50">{{
-                      formatarParaReal(totalGanhos)
-                    }}</span>
-                  </v-card-title>
+                  <v-card class="dark-card" :to="'/receitas'">
+                    <v-row class="pt-5">
+                      <v-avatar color="green" class="avatar-receitas">
+                        <v-icon>mdi-chevron-up</v-icon>
+                      </v-avatar>
+                      <v-card-text class="receitas-text">Receitas</v-card-text>
+                    </v-row>
+                    <v-card-title class="pl-5 pt-0 valor-receitas">
+                      <span style="color: #4caf50">{{
+                        formatarParaReal(totalGanhos)
+                      }}</span>
+                    </v-card-title>
+                  </v-card>
                 </v-col>
                 <v-col>
-                  <v-row>
-                    <v-avatar color="red" class="avatar-receitas">
-                      <v-icon>mdi-chevron-down</v-icon>
-                    </v-avatar>
-                    <v-card-text class="receitas-text">Despesas</v-card-text>
-                  </v-row>
-                  <v-card-title class="pl-5 pt-0 valor-receitas">
-                    <span style="color: #f44336">{{
-                      formatarParaReal(totalGastos)
-                    }}</span>
-                  </v-card-title>
+                  <v-card class="dark-card" :to="'/despesas'">
+                    <v-row class="pt-5">
+                      <v-avatar color="red" class="avatar-receitas">
+                        <v-icon>mdi-chevron-down</v-icon>
+                      </v-avatar>
+                      <v-card-text class="receitas-text">Despesas</v-card-text>
+                    </v-row>
+                    <v-card-title class="pl-5 pt-0 valor-receitas">
+                      <span style="color: #f44336">{{
+                        formatarParaReal(totalGastos)
+                      }}</span>
+                    </v-card-title>
+                  </v-card>
                 </v-col>
               </v-row>
             </v-card>
@@ -97,7 +101,7 @@
         </v-row>
         <v-row>
           <v-col class="pl-0 pr-0">
-            <v-card class="borda-10-cards dark-card">
+            <v-card class="borda-10-cards dark-card" :to="'/compras'">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#FF3EA5"
@@ -109,7 +113,7 @@
                 </v-avatar>
                 <h2 class="ml-3">{{ listaDeCompras.length }}</h2>
               </v-card-title>
-              <v-card-text class="pl-0 pr-0">
+              <v-card-text class="coluna-grafico-compras">
                 <div>
                   <apexchart
                     type="area"
@@ -118,7 +122,9 @@
                   ></apexchart>
                 </div>
               </v-card-text>
-              <v-card-title class="pb-5" align="center">Compras no mês</v-card-title>
+              <v-card-title class="pb-5" align="center"
+                >Compras do mês</v-card-title
+              >
             </v-card>
           </v-col>
         </v-row>
@@ -140,48 +146,6 @@
               <v-card-subtitle class="pb-5">
                 <strong>18%</strong> maior que o mês anterior
               </v-card-subtitle>
-
-              <v-card-actions>
-                <v-spacer />
-                <v-btn color="#4CAF50" @click="expandirCardGanhos">
-                  Detalhes
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="expandirGanhos">
-                  <v-divider></v-divider>
-
-                  <v-card>
-                    <v-data-table
-                      :headers="colunasTabelas"
-                      :items="ganhos"
-                      item-key="id"
-                      hide-default-header
-                      hide-default-footer
-                      items-per-page="99999"
-                      class="dark-card"
-                    >
-                      <template v-slot:item="{ item }">
-                        <tr>
-                          <td>{{ item.descricao }}</td>
-                          <td>{{ formatarParaReal(item.valor) }}</td>
-                          <td>
-                            <v-chip
-                              small
-                              label
-                              :color="item.pago === true ? 'green' : 'red'"
-                            >
-                              <span v-if="item.pago === true">Recebido</span>
-                              <span v-if="item.pago === false">Aberto</span>
-                            </v-chip>
-                          </td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </div>
-              </v-expand-transition>
             </v-card>
           </v-col>
         </v-row>
@@ -204,49 +168,6 @@
               <v-card-subtitle class="pb-5">
                 <strong>18%</strong> maior que o mês anterior
               </v-card-subtitle>
-
-              <v-card-actions>
-                <v-spacer />
-                <v-spacer />
-                <v-btn color="#FCDC2A" @click="expandirCardGastos">
-                  Detalhes
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="expandirGastos">
-                  <v-divider></v-divider>
-
-                  <v-card class="dark-card">
-                    <v-data-table
-                      :headers="colunasTabelas"
-                      :items="gastos"
-                      item-key="id"
-                      hide-default-header
-                      hide-default-footer
-                      items-per-page="99999"
-                      class="dark-card"
-                    >
-                      <template v-slot:item="{ item }">
-                        <tr>
-                          <td>{{ item.descricao }}</td>
-                          <td>{{ formatarParaReal(item.valor) }}</td>
-                          <td>
-                            <v-chip
-                              small
-                              label
-                              :color="item.pago === true ? 'green' : 'red'"
-                            >
-                              <span v-if="item.pago === true">Pago</span>
-                              <span v-if="item.pago === false">Aberto</span>
-                            </v-chip>
-                          </td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </div>
-              </v-expand-transition>
             </v-card>
           </v-col>
         </v-row>
@@ -568,67 +489,7 @@ export default {
       );
     },
 
-    async adicionarCompra() {
-      if (this.validarCompra(this.compra)) {
-        this.compra.data_compra = moment(
-          this.compra.data_compra,
-          "YYYY-MM-DD"
-        ).toISOString();
-        comprasService
-          .cadastrar(this.compra)
-          .then(() => {
-            this.compra = new ComprasModel();
-            this.obterListaCompras();
-            this.modalAdicionarCompra = false;
-            this.$swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Compra cadastrada com sucesso",
-              showConfirmButton: false,
-              timer: 1000,
-              customClass: {
-                container: "dark-swal-container",
-                popup: "dark-swal-popup",
-                header: "dark-swal-header",
-                title: "dark-swal-title",
-                content: "dark-swal-content",
-                confirmButton: "dark-swal-confirm-button",
-                cancelButton: "dark-swal-cancel-button",
-                actions: "dark-swal-actions",
-                footer: "dark-swal-footer",
-              },
-            });
-          })
-          .catch((error) => {
-            this.modalAdicionarCompra = false;
-            console.error("Erro ao adicionar a compra:", error);
-            this.$swal.fire({
-              position: "center",
-              icon: "error",
-              title: "Erro ao adicionar a compra",
-              showConfirmButton: false,
-              timer: 1000,
-              customClass: {
-                container: "dark-swal-container",
-                popup: "dark-swal-popup",
-                header: "dark-swal-header",
-                title: "dark-swal-title",
-                content: "dark-swal-content",
-                confirmButton: "dark-swal-confirm-button",
-                cancelButton: "dark-swal-cancel-button",
-                actions: "dark-swal-actions",
-                footer: "dark-swal-footer",
-              },
-            });
-          });
-      } else {
-        this.$swal.fire(
-          "Erro",
-          "Por favor, preencha todos os campos obrigatórios",
-          "error"
-        );
-      }
-    },
+    
 
     async obterListaGastos() {
       try {
@@ -726,6 +587,11 @@ export default {
 
 .avatar-receitas {
   margin-left: 25px;
+}
+
+.coluna-grafico-compras {
+  margin-right: -25px;
+  margin-left: -27px;
 }
 
 .valor-receitas {
