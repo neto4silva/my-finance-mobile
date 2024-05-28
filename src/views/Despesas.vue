@@ -225,7 +225,7 @@ export default {
 </script>
 <style scoped>
 .last-card {
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .categoria-card {
