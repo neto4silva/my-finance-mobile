@@ -45,4 +45,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.v-card.theme--dark {
+  background-color: #312d4b; /* Cor de fundo para os cards no tema dark */
+}
 </style>

@@ -26,7 +26,7 @@
       <v-container>
         <v-row>
           <v-col class="pl-0 pr-0">
-            <v-card class="card-total-mes">
+            <v-card class="card-total-mes dark-card">
               <v-card-title class="d-flex align-center">
                 <v-avatar>
                   <v-img
@@ -97,7 +97,7 @@
         </v-row>
         <v-row>
           <v-col class="pl-0 pr-0">
-            <v-card class="borda-10-cards">
+            <v-card class="borda-10-cards dark-card">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#FF3EA5"
@@ -141,6 +141,7 @@
                       hide-default-header
                       hide-default-footer
                       items-per-page="99999"
+                      class="dark-card"
                     >
                       <template v-slot:item="{ item }">
                         <tr>
@@ -168,7 +169,7 @@
 
         <v-row>
           <v-col class="pl-0 pr-0">
-            <v-card class="borda-10-cards">
+            <v-card class="borda-10-cards dark-card">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#4CAF50"
@@ -211,6 +212,7 @@
                       hide-default-header
                       hide-default-footer
                       items-per-page="99999"
+                      class="dark-card"
                     >
                       <template v-slot:item="{ item }">
                         <tr>
@@ -238,7 +240,7 @@
 
         <v-row>
           <v-col class="pl-0 pr-0">
-            <v-card class="card-gastos-fixos borda-10-cards">
+            <v-card class="card-gastos-fixos borda-10-cards dark-card">
               <v-card-title class="d-flex align-center">
                 <v-avatar
                   color="#FCDC2A"
@@ -274,7 +276,7 @@
                 <div v-show="expandirGastos">
                   <v-divider></v-divider>
 
-                  <v-card>
+                  <v-card class="dark-card">
                     <v-data-table
                       :headers="colunasTabelas"
                       :items="gastos"
@@ -282,6 +284,7 @@
                       hide-default-header
                       hide-default-footer
                       items-per-page="99999"
+                      class="dark-card"
                     >
                       <template v-slot:item="{ item }">
                         <tr>
@@ -309,7 +312,7 @@
       </v-container>
 
       <v-dialog v-model="modalAdicionarGanho" persistent max-width="600px">
-        <v-card>
+        <v-card class="dark-card">
           <v-card-title>Adicionar Receitas</v-card-title>
           <v-card-text>
             <v-text-field
@@ -351,7 +354,7 @@
       </v-dialog>
 
       <v-dialog v-model="modalAdicionarCompra" persistent max-width="600px">
-        <v-card>
+        <v-card class="dark-card">
           <v-card-title>Adicionar Compra</v-card-title>
           <v-card-text>
             <v-text-field
@@ -708,6 +711,10 @@ export default {
 
 .card-gastos-fixos {
   margin-bottom: 60px;
+}
+
+.dark-card {
+  background: #312d4b !important;
 }
 
 .card-total-mes {
