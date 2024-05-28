@@ -66,7 +66,7 @@
               </v-card-text>
               <v-row>
                 <v-col>
-                  <v-card class="dark-card" :to="'/receitas'">
+                  <v-card class="dark-card" flat :to="'/receitas'">
                     <v-row class="pt-5">
                       <v-avatar color="green" class="avatar-receitas">
                         <v-icon>mdi-chevron-up</v-icon>
@@ -81,7 +81,7 @@
                   </v-card>
                 </v-col>
                 <v-col>
-                  <v-card class="dark-card" :to="'/despesas'">
+                  <v-card class="dark-card" flat :to="'/despesas'">
                     <v-row class="pt-5">
                       <v-avatar color="red" class="avatar-receitas">
                         <v-icon>mdi-chevron-down</v-icon>

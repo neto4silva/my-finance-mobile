@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col class="pl-6 pt-6 pb-6">
-      <v-btn icon color="#28243d" :to="'/'">
+      <v-btn icon color="#28243d" flat :to="'/'">
         <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
     </v-col>
