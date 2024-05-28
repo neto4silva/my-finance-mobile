@@ -5,6 +5,7 @@ export default class ReceitasModel {
       this.data_ganho = obj.data_ganho;
       this.valor = obj.valor;
       this.descricao = obj.descricao;
+      this.categoria = obj.categoria;
       this.pago = obj.pago;
     }
   

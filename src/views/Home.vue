@@ -473,7 +473,7 @@ export default {
         console.log(error);
         this.$swal.fire(
           "Erro",
-          "Ocorreu um erro ao obter os clientes",
+          "Ocorreu um erro ao obter as compras",
           "error"
         );
       }

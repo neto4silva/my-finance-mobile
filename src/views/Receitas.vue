@@ -1,35 +1,88 @@
 <template>
   <v-container>
     <v-row>
-      <v-col class="pl-6 pt-6 pb-6">
+      <v-col>
         <v-btn icon color="#28243d" flat :to="'/'">
           <v-icon> mdi-chevron-left </v-icon>
         </v-btn>
       </v-col>
     </v-row>
     <v-row>
-      <v-data-table
-        :headers="colunasTabelas"
-        :items="listaDeReceitas"
-        item-key="id"
-        hide-default-header
-        hide-default-footer
-        items-per-page="99999"
-        class="dark-card"
-      >
-        <template v-slot:item="{ item }">
-          <tr>
-            <td>{{ item.descricao }}</td>
-            <td>{{ formatarParaReal(item.valor) }}</td>
-            <td>
-              <v-chip small label :color="item.pago === true ? 'green' : 'red'">
-                <span v-if="item.pago === true">Recebido</span>
-                <span v-if="item.pago === false">Aberto</span>
-              </v-chip>
-            </td>
-          </tr>
-        </template>
-      </v-data-table>
+      <v-col class="pa-0">
+        <v-card class="cartao-informacoes">
+          <v-row>
+            <v-col cols="6">
+              <v-card flat>
+                <v-row class="pt-5">
+                  <v-avatar class="avatar-receitas">
+                    <v-icon>mdi-lock-outline</v-icon>
+                  </v-avatar>
+                  <v-card-text class="receitas-text">Total pendente</v-card-text>
+                </v-row>
+                <v-card-title class="pl-5 pt-0 valor-receitas">
+                  <span style="color: #4caf50; font-size: 16px;">{{
+                    formatarParaReal(totalPendente)
+                  }}</span>
+                </v-card-title>
+              </v-card>
+            </v-col>
+            <v-col cols="6">
+              <v-card flat>
+                <v-row class="pt-5">
+                  <v-avatar class="avatar-receitas">
+                    <v-icon>mdi-wallet-outline</v-icon>
+                  </v-avatar>
+                  <v-card-text class="receitas-text">Total Pago</v-card-text>
+                </v-row>
+                <v-card-title class="pl-5 pt-0 valor-receitas">
+                  <span style="color: #4caf50; font-size: 16px;">{{
+                    formatarParaReal(totalPago)
+                  }}</span>
+                </v-card-title>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-divider/>
+          <v-col
+            cols="12"
+            sm="6"
+            md="4"
+            v-for="(item, index) in listaDeReceitas"
+            :key="index"
+          >
+            <v-card
+              :class="[
+                'dark-card',
+                { 'last-card': index === listaDeReceitas.length - 1 },
+              ]"
+            >
+              <v-card-title>
+                <v-row>
+                  <v-col>
+                    {{ item.descricao }}
+                  </v-col>
+                  <v-spacer />
+                  <v-col cols="3">
+                    <v-chip
+                      small
+                      :color="item.pago === true ? 'green' : 'red'"
+                      label
+                    >
+                      {{ item.pago === true ? "Pago" : "Aberto" }}
+                    </v-chip>
+                  </v-col>
+                </v-row>
+              </v-card-title>
+              <v-card-subtitle
+                >Valor: {{ formatarParaReal(item.valor) }}</v-card-subtitle
+              >
+              <v-card-subtitle class="pb-5"
+                >Categoria: {{ item.categoria }}</v-card-subtitle
+              >
+            </v-card>
+          </v-col>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -59,6 +112,19 @@ export default {
       listaDeReceitas: [],
       compra: new ReceitasModel(),
     };
+  },
+
+  computed: {
+    totalPago() {
+      return this.listaDeReceitas
+        .filter((gasto) => gasto.pago)
+        .reduce((total, gasto) => total + gasto.valor, 0);
+    },
+    totalPendente() {
+      return this.listaDeReceitas
+        .filter((gasto) => !gasto.pago)
+        .reduce((total, gasto) => total + gasto.valor, 0);
+    },
   },
 
   mounted() {
@@ -153,4 +219,13 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.last-card {
+  margin-bottom: 60px;
+}
+
+.cartao-informacoes {
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+}
+</style>

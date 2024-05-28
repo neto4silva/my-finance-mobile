@@ -5,6 +5,7 @@ export default class DespesasModel {
       this.data_gasto = obj.data_gasto;
       this.valor = obj.valor;
       this.descricao = obj.descricao;
+      this.categoria = obj.categoria;
       this.pago = obj.pago;
     }
   

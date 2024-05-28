@@ -1,39 +1,44 @@
 <template>
   <v-container>
     <v-row>
-      <v-col class="pl-6 pt-6 pb-6">
+      <v-col>
         <v-btn icon color="#28243d" flat :to="'/'">
           <v-icon> mdi-chevron-left </v-icon>
         </v-btn>
       </v-col>
     </v-row>
     <v-row>
-      <v-data-table
-        :headers="colunasTabelas"
-        :items="listaDeCompras"
-        item-key="id"
-        hide-default-header
-        hide-default-footer
-        items-per-page="99999"
-        class="dark-card"
-      >
-        <template v-slot:item="{ item }">
-          <tr>
-            <td>{{ item.descricao }}</td>
-            <td>{{ formatarParaReal(item.valor) }}</td>
-            <td>
+      <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+          md="4"
+          v-for="(item, index) in listaDeCompras"
+          :key="index"
+        >
+          <v-card
+            :class="[
+              'dark-card',
+              { 'last-card': index === listaDeCompras.length - 1 },
+            ]"
+          >
+            <v-card-title>{{ item.descricao }}</v-card-title>
+            <v-card-subtitle
+              >Valor: {{ formatarParaReal(item.valor) }}</v-card-subtitle
+            >
+            <v-card-subtitle>
+              Parcelas:
               <v-chip
                 small
-                label
                 :color="item.parcelas === 1 ? 'green' : 'red'"
+                label
               >
-                <span v-if="item.parcelas === 1">À vista</span>
-                <span v-if="item.parcelas !== 1">Parcelado</span>
+                {{ item.parcelas === 1 ? "À vista" : "Parcelado" }}
               </v-chip>
-            </td>
-          </tr>
-        </template>
-      </v-data-table>
+            </v-card-subtitle>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-row>
   </v-container>
 </template>
@@ -157,4 +162,8 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.last-card {
+  margin-bottom: 60px;
+}
+</style>
