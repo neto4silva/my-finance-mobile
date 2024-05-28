@@ -1,33 +1,35 @@
 <template>
   <v-row>
     <v-col class="pt-6 pb-6">
-      <v-btn icon color="#28243d" >
+      <v-btn icon color="#28243d" :to="'/'">
         <v-icon> mdi-chevron-left </v-icon>
       </v-btn>
     </v-col>
   </v-row>
-  <v-data-table
-    :headers="colunasTabelas"
-    :items="listaDeCompras"
-    item-key="id"
-    hide-default-header
-    hide-default-footer
-    items-per-page="99999"
-    class="dark-card"
-  >
-    <template v-slot:item="{ item }">
-      <tr>
-        <td>{{ item.descricao }}</td>
-        <td>{{ formatarParaReal(item.valor) }}</td>
-        <td>
-          <v-chip small label :color="item.parcelas === 1 ? 'green' : 'red'">
-            <span v-if="item.parcelas === 1">À vista</span>
-            <span v-if="item.parcelas !== 1">Parcelado</span>
-          </v-chip>
-        </td>
-      </tr>
-    </template>
-  </v-data-table>
+  <v-row>
+    <v-data-table
+      :headers="colunasTabelas"
+      :items="listaDeCompras"
+      item-key="id"
+      hide-default-header
+      hide-default-footer
+      items-per-page="99999"
+      class="dark-card"
+    >
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.descricao }}</td>
+          <td>{{ formatarParaReal(item.valor) }}</td>
+          <td>
+            <v-chip small label :color="item.parcelas === 1 ? 'green' : 'red'">
+              <span v-if="item.parcelas === 1">À vista</span>
+              <span v-if="item.parcelas !== 1">Parcelado</span>
+            </v-chip>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
+  </v-row>
 </template>
 
 <script>
