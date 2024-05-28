@@ -109,60 +109,16 @@
                 </v-avatar>
                 <h2 class="ml-3">{{ listaDeCompras.length }}</h2>
               </v-card-title>
-              <v-card-text> Compras feitas no mês </v-card-text>
-              <v-card-subtitle class="pb-5">
-                <strong>18%</strong> maior que o mês anterior
-              </v-card-subtitle>
-
-              <v-card-actions>
-                <v-btn
-                  color="#FF3EA5"
-                  prepend-icon="mdi-plus"
-                  variant="outlined"
-                  @click="modalAdicionarCompra = true"
-                >
-                  Adicionar
-                </v-btn>
-                <v-spacer />
-                <v-btn color="#FF3EA5" @click="expandirCardCompras">
-                  Detalhes
-                </v-btn>
-              </v-card-actions>
-
-              <v-expand-transition>
-                <div v-show="expandirCompras">
-                  <v-divider></v-divider>
-
-                  <v-card>
-                    <v-data-table
-                      :headers="colunasTabelas"
-                      :items="listaDeCompras"
-                      item-key="id"
-                      hide-default-header
-                      hide-default-footer
-                      items-per-page="99999"
-                      class="dark-card"
-                    >
-                      <template v-slot:item="{ item }">
-                        <tr>
-                          <td>{{ item.descricao }}</td>
-                          <td>{{ formatarParaReal(item.valor) }}</td>
-                          <td>
-                            <v-chip
-                              small
-                              label
-                              :color="item.parcelas === 1 ? 'green' : 'red'"
-                            >
-                              <span v-if="item.parcelas === 1">À vista</span>
-                              <span v-if="item.parcelas !== 1">Parcelado</span>
-                            </v-chip>
-                          </td>
-                        </tr>
-                      </template>
-                    </v-data-table>
-                  </v-card>
+              <v-card-text class="pl-0 pr-0">
+                <div>
+                  <apexchart
+                    type="area"
+                    :options="chartOptions"
+                    :series="chartSeries"
+                  ></apexchart>
                 </div>
-              </v-expand-transition>
+              </v-card-text>
+              <v-card-title class="pb-5" align="center">Compras no mês</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -186,14 +142,6 @@
               </v-card-subtitle>
 
               <v-card-actions>
-                <v-btn
-                  color="#4CAF50"
-                  prepend-icon="mdi-plus"
-                  variant="outlined"
-                  @click="modalAdicionarGanho = true"
-                >
-                  Adicionar
-                </v-btn>
                 <v-spacer />
                 <v-btn color="#4CAF50" @click="expandirCardGanhos">
                   Detalhes
@@ -258,13 +206,6 @@
               </v-card-subtitle>
 
               <v-card-actions>
-                <v-btn
-                  color="#FCDC2A"
-                  prepend-icon="mdi-plus"
-                  variant="outlined"
-                >
-                  Adicionar
-                </v-btn>
                 <v-spacer />
                 <v-spacer />
                 <v-btn color="#FCDC2A" @click="expandirCardGastos">
@@ -407,13 +348,17 @@
 
 <script>
 import axios from "axios";
-import api from "@/services/api.js";
+import VueApexCharts from "vue3-apexcharts";
 import moment from "moment";
 import comprasService from "@/services/compras-services.js";
 import ComprasModel from "@/models/compras-model.js";
 
 export default {
   name: "Home",
+
+  components: {
+    apexchart: VueApexCharts,
+  },
 
   data() {
     return {
@@ -445,11 +390,70 @@ export default {
         "Novembro",
         "Dezembro",
       ],
+      chartOptions: {
+        chart: {
+          height: 250,
+          type: "area",
+          toolbar: {
+            show: false,
+          },
+          toolbar: {
+            show: false,
+          },
+        },
+
+        dataLabels: {
+          enabled: false,
+        },
+        tooltip: {
+          enabled: false,
+        },
+        colors: ["#FF3EA5"],
+        fill: {
+          type: "gradient",
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            stops: [0, 90, 100],
+            colorStops: [
+              {
+                offset: 0,
+                color: "#FF3EA5",
+              },
+              {
+                offset: 100,
+                color: "rgb(49, 45, 75)",
+              },
+            ],
+          },
+        },
+        grid: {
+          show: false,
+        },
+        yaxis: {
+          show: false,
+        },
+        xaxis: {
+          labels: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+        },
+      },
+      chartSeries: [
+        {
+          name: "Valor",
+          data: [],
+        },
+      ],
+
       mesCorrente: "",
       listaDeCompras: [],
       gastos: [],
       ganhos: [],
-      expandirCompras: false,
       expandirGastos: false,
       expandirGanhos: false,
       modalAdicionarGanho: false,
@@ -507,11 +511,6 @@ export default {
       this.mesCorrente = month;
     },
 
-    expandirCardCompras() {
-      this.expandirCompras = !this.expandirCompras;
-      this.obterListaCompras();
-    },
-
     expandirCardGastos() {
       this.expandirGastos = !this.expandirGastos;
       this.obterListaGastos();
@@ -523,46 +522,41 @@ export default {
     },
 
     async obterListaCompras() {
-      comprasService
-        .obterTodas()
-        .then((response) => {
-          this.listaDeCompras = response.data.map((c) => new ComprasModel(c));
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$swal.fire(
-            "Erro",
-            "Ocorreu um erro ao obter os clientes",
-            "error"
-          );
-        });
-    },
+      try {
+        const response = await comprasService.obterTodas();
+        this.listaDeCompras = response.data.map((c) => new ComprasModel(c));
 
-    editarCliente() {
-      clienteService
-        .atualizar(this.compra)
-        .then(() => {
-          this.compra = new Cliente();
-          this.obterTodosOsClientes();
-          if (!this.manterAberto) {
-            this.modalAberto = false;
+        const comprasPorDia = {};
+
+        this.listaDeCompras.forEach((compra) => {
+          const dataCompra = compra.data_compra.split("T")[0];
+          if (comprasPorDia[dataCompra]) {
+            comprasPorDia[dataCompra]++;
+          } else {
+            comprasPorDia[dataCompra] = 1;
           }
-          this.$swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Cliente atualizado com sucesso",
-            showConfirmButton: false,
-            timer: 1000,
-          });
-        })
-        .catch((error) => {
-          console.error("Erro ao editar o cliente:", error);
-          this.$swal.fire(
-            "Erro",
-            "Ocorreu um erro ao editar o cliente",
-            "error"
-          );
         });
+
+        const dadosGrafico = Object.keys(comprasPorDia).map((data) => ({
+          x: data,
+          y: comprasPorDia[data],
+        }));
+        dadosGrafico.sort((a, b) => new Date(a.x) - new Date(b.x));
+
+        this.chartSeries[0].data = dadosGrafico;
+
+        if (this.$refs.chart) {
+          const chart = new ApexCharts(this.$refs.chart, this.chartOptions);
+          chart.render();
+        }
+      } catch (error) {
+        console.log(error);
+        this.$swal.fire(
+          "Erro",
+          "Ocorreu um erro ao obter os clientes",
+          "error"
+        );
+      }
     },
 
     validarCompra(compra) {
@@ -767,6 +761,10 @@ export default {
 
 .dark-swal-confirm-button {
   background-color: #555;
+}
+
+svg line {
+  stroke: transparent !important;
 }
 
 .dark-swal-cancel-button {
