@@ -270,7 +270,6 @@
 <script>
 import axios from "axios";
 import VueApexCharts from "vue3-apexcharts";
-import moment from "moment";
 import comprasService from "@/services/compras-services.js";
 import ComprasModel from "@/models/compras-model.js";
 

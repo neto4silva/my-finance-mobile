@@ -1,40 +1,44 @@
 <template>
-  <v-row>
-    <v-col class="pl-6 pt-6 pb-6">
-      <v-btn icon color="#28243d" flat :to="'/'">
-        <v-icon> mdi-chevron-left </v-icon>
-      </v-btn>
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-data-table
-      :headers="colunasTabelas"
-      :items="listaDeReceitas"
-      item-key="id"
-      hide-default-header
-      hide-default-footer
-      items-per-page="99999"
-      class="dark-card"
-    >
-      <template v-slot:item="{ item }">
-        <tr>
-          <td>{{ item.descricao }}</td>
-          <td>{{ formatarParaReal(item.valor) }}</td>
-          <td>
-            <v-chip small label :color="item.pago === true ? 'green' : 'red'">
-              <span v-if="item.pago === true">Recebido</span>
-              <span v-if="item.pago === false">Aberto</span>
-            </v-chip>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-col class="pl-6 pt-6 pb-6">
+        <v-btn icon color="#28243d" flat :to="'/'">
+          <v-icon> mdi-chevron-left </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-data-table
+        :headers="colunasTabelas"
+        :items="listaDeReceitas"
+        item-key="id"
+        hide-default-header
+        hide-default-footer
+        items-per-page="99999"
+        class="dark-card"
+      >
+        <template v-slot:item="{ item }">
+          <tr>
+            <td>{{ item.descricao }}</td>
+            <td>{{ formatarParaReal(item.valor) }}</td>
+            <td>
+              <v-chip small label :color="item.pago === true ? 'green' : 'red'">
+                <span v-if="item.pago === true">Recebido</span>
+                <span v-if="item.pago === false">Aberto</span>
+              </v-chip>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import receitasService from "@/services/receitas-services.js";
 import ReceitasModel from "@/models/receitas-model.js";
+import moment from "moment";
+
 export default {
   data() {
     return {
