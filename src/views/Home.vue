@@ -339,7 +339,7 @@ export default {
               },
               {
                 offset: 100,
-                color: "rgb(49, 45, 75)",
+                color: "#2e3637",
               },
             ],
           },
