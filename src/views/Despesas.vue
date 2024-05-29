@@ -257,7 +257,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="modalCategorias" height="400">
+      <v-dialog v-model="modalCategorias">
       <v-card class="modal-categorias">
         <v-card-text>
           <v-list>
@@ -559,11 +559,7 @@ export default {
 }
 
 .modal-categorias {
-	border-top-left-radius: 20px !important;
-	border-top-right-radius: 20px !important;
-	margin-bottom: -150px;
-	margin-left: -25px;
-	margin-right: -25px;
+	border-radius: 20px !important;
 }
 
 .descricao-despesa {
