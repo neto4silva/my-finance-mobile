@@ -561,7 +561,7 @@ export default {
 .modal-categorias {
 	border-top-left-radius: 20px !important;
 	border-top-right-radius: 20px !important;
-	margin-bottom: -100px;
+	margin-bottom: -150px;
 	margin-left: -25px;
 	margin-right: -25px;
 }
