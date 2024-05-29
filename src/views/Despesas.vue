@@ -217,7 +217,7 @@
             </v-card>
             <v-card flat>
               <v-card class="pt-4" color="#2e3637">
-                <div v-if="!dataSelecionada">
+                <div>
                   <v-row class="pr-12 pl-12 pb-5 pt-1">
                     <v-icon class="pr-8 pt-3">mdi-microphone-outline</v-icon>
                     <v-text-field
@@ -233,7 +233,7 @@
             </v-card>
             <v-card flat>
               <v-card class="pt-4" color="#2e3637">
-                <div v-if="!dataSelecionada">
+                <div>
                   <v-row class="pr-12 pl-12 pb-5 pt-1">
                     <v-icon class="pr-8 pt-3">mdi-bookmark-plus-outline</v-icon>
                     <v-chip
