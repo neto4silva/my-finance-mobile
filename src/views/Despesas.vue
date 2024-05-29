@@ -112,17 +112,24 @@
                     </v-row>
                     <v-row>
                       <v-col class="pt-0 avatar-card" align="end">
-                        <v-avatar
-                          size="20"
-                          :color="item.pago === true ? 'green' : 'red'"
+                        <v-chip
+													v-if="item.pago"
+													size="small"
+													label
+                          color="green"
                         >
-                          <v-icon v-if="item.pago === true" size="x-small"
-                            >mdi-check</v-icon
-                          >
-                          <v-icon v-if="item.pago === false" size="x-small"
-                            >mdi-close</v-icon
-                          >
-                        </v-avatar>
+                          Pago
+													<v-icon class="pl-2">mdi-check</v-icon>
+                        </v-chip>
+												<v-chip
+													v-if="!item.pago"
+													size="small"
+													label
+                          color="red"
+                        >
+                          Pendente
+													<v-icon class="pl-2">mdi-close</v-icon>
+                        </v-chip>
                       </v-col>
                     </v-row>
                   </v-col>
