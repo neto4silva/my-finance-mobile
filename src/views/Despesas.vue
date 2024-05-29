@@ -157,7 +157,10 @@
           <span style="font-size: 12px" class="pl-4 pb-0"
             >Valor da despesa</span
           >
-          <span style="font-size: 30px; font-weight: 600" class="pl-4 pt-0"
+          <span
+            @click="dialogCalculadora = !dialogCalculadora"
+            style="font-size: 30px; font-weight: 600"
+            class="pl-4 pt-0"
             >R$ 0,00</span
           >
           <v-card class="pt-3 card-informacoes" color="#2e3637">
@@ -238,8 +241,21 @@
                     <v-icon class="pr-8 pt-3">mdi-bookmark-plus-outline</v-icon>
                     <v-chip
                       variant="outlined"
-                      :color="categoriaSelecionada ? categoriaSelecionada.cor : 'white'"
-                    > <v-icon v-if="categoriaSelecionada" class="mr-2">{{ categoriaSelecionada.icone  }}</v-icon> {{ categoriaSelecionada ? categoriaSelecionada.descricao : 'Nenhuma' }}</v-chip>
+                      :color="
+                        categoriaSelecionada
+                          ? categoriaSelecionada.cor
+                          : 'white'
+                      "
+                    >
+                      <v-icon v-if="categoriaSelecionada" class="mr-2">{{
+                        categoriaSelecionada.icone
+                      }}</v-icon>
+                      {{
+                        categoriaSelecionada
+                          ? categoriaSelecionada.descricao
+                          : "Nenhuma"
+                      }}</v-chip
+                    >
                   </v-row>
                 </div>
                 <v-divider></v-divider>
@@ -258,21 +274,53 @@
         </v-card>
       </v-dialog>
       <v-dialog v-model="modalCategorias">
-      <v-card class="modal-categorias">
-        <v-card-text>
-          <v-list>
-            <v-list-item
-              v-for="(item, index) in categorias"
-              :key="index"
-              @click="selecionarCategoria(item)"
-            >
-              <v-avatar :color="item.cor" class="mr-3 mb-3"><v-icon >{{ item.icone }}</v-icon></v-avatar> <span>{{ item.descricao }}</span>
-							<v-divider></v-divider>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+        <v-card class="modal-categorias">
+          <v-card-text>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in categorias"
+                :key="index"
+                @click="selecionarCategoria(item)"
+              >
+                <v-avatar :color="item.cor" class="mr-3 mb-3"
+                  ><v-icon>{{ item.icone }}</v-icon></v-avatar
+                >
+                <span>{{ item.descricao }}</span>
+                <v-divider></v-divider>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="dialogCalculadora" max-width="500">
+        <v-card>
+          <v-card-text>
+            <div class="calculator">
+              <div class="display">{{ display }}</div>
+              <div class="buttons">
+                <div
+                  v-for="button in buttons"
+                  :key="button"
+                  @click="addToExpression(button)"
+                >
+                  {{ button }}
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+          <v-card-text>
+            <v-row>
+							<v-col class="pl-0 pr-0">
+              <v-btn variant="outlined" idth="100%" color="red" @click="fecharCalculadora">CANCELAR</v-btn>
+						</v-col>
+						<v-col class="pl-0 pr-0">
+              <v-btn color="red" width="100%" @click="calcular">CONCLUÍDO</v-btn>
+						</v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-container>
   </v-app>
 </template>
@@ -308,8 +356,29 @@ export default {
       modalSelecionarData: false,
       dataDespesa: undefined,
       listaDeDespesas: [],
-	  categoriaSelecionada: undefined,
-	  modalCategorias: false,
+      categoriaSelecionada: undefined,
+      modalCategorias: false,
+      dialogCalculadora: false,
+      expression: "",
+      display: "0",
+      buttons: [
+        "7",
+        "8",
+        "9",
+        "/",
+        "4",
+        "5",
+        "6",
+        "*",
+        "1",
+        "2",
+        "3",
+        "-",
+        "C",
+        "0",
+        "=",
+        "+",
+      ],
       categorias: {
         ALIMENTACAO: {
           cor: "green",
@@ -442,8 +511,8 @@ export default {
       this.modalSelecionarData = false;
     },
 
-	selecionarCategoria(categoria) {
-      this.categoriaSelecionada = categoria
+    selecionarCategoria(categoria) {
+      this.categoriaSelecionada = categoria;
       this.modalCategorias = false; // Fechar o diálogo após a seleção
     },
 
@@ -453,6 +522,30 @@ export default {
         this.dataDespesa = data;
         this.dataSelecionada = date;
         this.modalSelecionarData = false;
+      }
+    },
+
+    mostrarCalculadora() {
+      this.dialogCalculadora = true;
+    },
+    fecharCalculadora() {
+      this.dialogCalculadora = false;
+    },
+    addToExpression(button) {
+      if (button === "C") {
+        this.expression = "";
+      } else if (button === "=") {
+        this.calcular();
+      } else {
+        this.expression += button;
+      }
+      this.display = this.expression;
+    },
+    calcular() {
+      try {
+        this.display = eval(this.expression);
+      } catch (error) {
+        this.display = "Erro";
       }
     },
 
@@ -559,7 +652,7 @@ export default {
 }
 
 .modal-categorias {
-	border-radius: 20px !important;
+  border-radius: 20px !important;
 }
 
 .descricao-despesa {
@@ -574,6 +667,43 @@ export default {
 
 .data-selecionada:hover {
   background-color: #363e3f;
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.display {
+  background-color: #192122;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5px;
+}
+
+.buttons div {
+  background-color: #192122;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.buttons div:hover {
+  background-color: #d0d0d0;
 }
 
 .botao-adicionar-despesa {
