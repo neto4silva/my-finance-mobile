@@ -38,12 +38,13 @@
                 <v-menu>
                   <template v-slot:activator="{ props }">
                     <v-btn
-                      color="deep-purple"
+                      color="#00bcd4"
                       variant="outlined"
                       v-bind="props"
                     >
                       {{ mesCorrente }}
-                      <v-icon>mdi-chevron-down</v-icon>
+                      <v-divider class="border-opacity-100 pl-2" vertical></v-divider>
+                      <v-icon class="pl-3">mdi-chevron-down</v-icon>
                     </v-btn>
                   </template>
                   <v-list>
@@ -53,19 +54,17 @@
                       :value="month"
                       @click="selectMonth(month)"
                     >
-                      <v-list-item-title>{{ month }}</v-list-item-title>
+                      <v-list-item-title color="#7a5af5">{{ month }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
-                <v-spacer />
-                <v-avatar />
               </v-card-title>
               <v-card-text align="center">
                 <span>Saldo total</span>
                 <h1>{{ formatarParaReal(totalGanhosMenosGastos) }}</h1>
               </v-card-text>
               <v-row>
-                <v-col>
+                <v-col cols="6">
                   <v-card class="dark-card" flat :to="'/receitas'">
                     <v-row class="pt-5">
                       <v-avatar color="green" class="avatar-receitas">
@@ -74,13 +73,13 @@
                       <v-card-text class="receitas-text">Receitas</v-card-text>
                     </v-row>
                     <v-card-title class="pl-5 pt-0 valor-receitas">
-                      <span style="color: #4caf50">{{
+                      <span style="color: #4caf50; font-size: 16px;">{{
                         formatarParaReal(totalGanhos)
                       }}</span>
                     </v-card-title>
                   </v-card>
                 </v-col>
-                <v-col>
+                <v-col cols="6">
                   <v-card class="dark-card" flat :to="'/despesas'">
                     <v-row class="pt-5">
                       <v-avatar color="red" class="avatar-receitas">
@@ -89,7 +88,7 @@
                       <v-card-text class="receitas-text">Despesas</v-card-text>
                     </v-row>
                     <v-card-title class="pl-5 pt-0 valor-receitas">
-                      <span style="color: #f44336">{{
+                      <span style="color: #f44336; font-size: 16px;">{{
                         formatarParaReal(totalGastos)
                       }}</span>
                     </v-card-title>
@@ -274,7 +273,7 @@ import comprasService from "@/services/compras-services.js";
 import ComprasModel from "@/models/compras-model.js";
 
 export default {
-  name: "Home",
+  name: "ViewHome",
 
   components: {
     apexchart: VueApexCharts,
@@ -314,9 +313,6 @@ export default {
         chart: {
           height: 250,
           type: "area",
-          toolbar: {
-            show: false,
-          },
           toolbar: {
             show: false,
           },
@@ -466,7 +462,7 @@ export default {
         this.chartSeries[0].data = dadosGrafico;
 
         if (this.$refs.chart) {
-          const chart = new ApexCharts(this.$refs.chart, this.chartOptions);
+          const chart = new VueApexCharts(this.$refs.chart, this.chartOptions);
           chart.render();
         }
       } catch (error) {
@@ -512,37 +508,6 @@ export default {
       }
     },
 
-    async adicionarGanho() {
-      try {
-        const dataGanhoISO = new Date(this.novoGanho.data_ganho).toISOString();
-        const response = await axios.post(
-          "https://my-finance-neto.azurewebsites.net/api/v1/ganhos",
-          {
-            data_ganho: dataGanhoISO,
-            valor: this.novoGanho.valor,
-            descricao: this.novoGanho.descricao,
-            pago: this.novoGanho.pago,
-          }
-        );
-        this.modalAdicionarGanho = false;
-        (this.novoGanho = {
-          data_ganho: undefined,
-          valor: undefined,
-          descricao: "",
-          pago: false,
-        }),
-          await this.obterListaGanhos();
-        this.alertaSucesso = true;
-      } catch (error) {
-        console.error("Erro ao adicionar ganho:", error);
-        this.modalAdicionarGanho = false;
-        this.mensagemErro = error.response
-          ? error.response.data
-          : "Erro ao adicionar ganho";
-        this.alertaErro = true;
-      }
-    },
-
     formatarParaReal(valor) {
       return valor.toLocaleString("pt-BR", {
         style: "currency",
@@ -568,7 +533,7 @@ export default {
 }
 
 .dark-card {
-  background: #312d4b !important;
+  background: #2e3637 !important;
 }
 
 .card-total-mes {
