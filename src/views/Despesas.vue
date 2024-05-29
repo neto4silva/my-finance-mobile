@@ -73,7 +73,7 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-divider />
+          <v-divider class="pb-3" />
           <v-col
             cols="12"
             sm="6"
@@ -113,22 +113,22 @@
                     <v-row>
                       <v-col class="pt-0 avatar-card" align="end">
                         <v-chip
-													v-if="item.pago"
-													size="small"
-													label
+                          v-if="item.pago"
+                          size="small"
+                          label
                           color="green"
                         >
                           Pago
-													<v-icon class="pl-2">mdi-check</v-icon>
+                          <v-icon class="pl-2">mdi-check</v-icon>
                         </v-chip>
-												<v-chip
-													v-if="!item.pago"
-													size="small"
-													label
+                        <v-chip
+                          v-if="!item.pago"
+                          size="small"
+                          label
                           color="red"
                         >
                           Pendente
-													<v-icon class="pl-2">mdi-close</v-icon>
+                          <v-icon class="pl-2">mdi-close</v-icon>
                         </v-chip>
                       </v-col>
                     </v-row>
@@ -159,22 +159,13 @@
         >
         <v-card class="pt-3 card-informacoes" color="#2e3637">
           <v-card flat>
-            <v-card
-              class="pt-4"
-              color="#2e3637"
-              link
-              @click="despesaPaga = !despesaPaga"
-            >
+            <v-card class="pt-4" color="#2e3637">
               <v-row class="pr-12 pl-12">
                 <v-icon class="pr-8 pt-4"
                   >mdi-checkbox-marked-circle-outline</v-icon
                 >
-                <span class="pt-2" v-if="despesaPaga"
-                  ><strong>Pago</strong></span
-                >
-                <span class="pt-2" v-if="!despesaPaga"
-                  ><strong>Não foi pago</strong></span
-                >
+                <span class="pt-2" v-if="despesaPaga">Pago</span>
+                <span class="pt-2" v-if="!despesaPaga">Não foi pago</span>
                 <v-spacer></v-spacer>
                 <v-switch
                   v-model="despesaPaga"
@@ -185,7 +176,48 @@
               <v-divider></v-divider>
             </v-card>
           </v-card>
+          <v-card flat>
+            <v-card class="pt-4" color="#2e3637">
+              <div v-if="!dataSelecionada">
+                <v-row class="pr-12 pl-12 pb-5 pt-1">
+                  <v-icon class="pr-8 pt-4">mdi-calendar</v-icon>
+                  <v-chip
+                    class="mr-2"
+                    :color="corDoChipHoje"
+                    @click="selecionarDataHoje"
+                  >
+                    Hoje
+                  </v-chip>
+                  <v-chip
+                    class="mr-2"
+                    :color="corDoChipOntem"
+                    @click="selecionarDataOntem"
+                  >
+                    Ontem
+                  </v-chip>
+                  <v-spacer></v-spacer>
+                  <v-chip @click="abrirDatePicker">Outros</v-chip>
+                </v-row>
+              </div>
+              <div v-if="dataSelecionada" @click="abrirDatePicker" class="data-selecionada">
+                <v-row class="pr-12 pl-12 pb-5 pt-1">
+                  <v-icon class="pr-8 pt-4 pb-4">mdi-calendar</v-icon>
+                  <span class="pt-1">{{ dataDespesa }}</span>
+                </v-row>
+              </div>
+              <v-divider></v-divider>
+            </v-card>
+          </v-card>
         </v-card>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="modalSelecionarData">
+      <v-card>
+        <v-date-picker v-model="dataSelecionada"></v-date-picker>
+
+        <v-card-actions>
+          <v-btn color="primary" @click="fecharDatePicker">Cancelar</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-container>
@@ -216,6 +248,11 @@ export default {
       ],
       modalAdicionarDespesa: false,
       despesaPaga: false,
+      corDoChipHoje: "",
+      corDoChipOntem: "",
+      dataSelecionada: undefined,
+      modalSelecionarData: false,
+      dataDespesa: undefined,
       listaDeDespesas: [],
       categorias: {
         Alimentação: { color: "green", icon: "mdi-food-drumstick-outline" },
@@ -253,6 +290,14 @@ export default {
     };
   },
 
+  watch: {
+    dataSelecionada(newDate, oldDate) {
+      if (newDate !== null) {
+        this.confirmarSelecao(newDate);
+      }
+    },
+  },
+
   computed: {
     totalPago() {
       return this.listaDeDespesas
@@ -271,6 +316,51 @@ export default {
   },
 
   methods: {
+    selecionarDataHoje() {
+      this.corDoChipHoje = this.corDoChipHoje === "" ? "red" : "";
+      this.corDoChipOntem = this.corDoChipOntem === "red" ? "" : "";
+    },
+
+    selecionarDataOntem() {
+      this.corDoChipHoje = this.corDoChipHoje === "red" ? "" : "";
+      this.corDoChipOntem = this.corDoChipOntem === "" ? "red" : "";
+    },
+
+    abrirDatePicker() {
+      this.modalSelecionarData = true;
+    },
+
+    fecharDatePicker() {
+      this.modalSelecionarData = false;
+    },
+
+    confirmarSelecao(date) {
+      if (date) {
+        const data = new Date(date).toLocaleDateString();
+        this.dataDespesa = data;
+        this.dataSelecionada = date;
+        this.modalSelecionarData = false;
+      }
+    },
+
+    obterNomeMes(mes) {
+      const meses = [
+        "jan",
+        "fev",
+        "mar",
+        "abr",
+        "mai",
+        "jun",
+        "jul",
+        "ago",
+        "set",
+        "out",
+        "nov",
+        "dez",
+      ];
+      return meses[mes];
+    },
+
     async obterListaCompras() {
       despesaService
         .obterTodas()
@@ -376,6 +466,10 @@ export default {
 .categoria-card {
   margin-top: -30px;
   margin-left: 50px;
+}
+
+.data-selecionada:hover {
+	background-color: #363e3f;
 }
 
 .botao-adicionar-despesa {
