@@ -233,13 +233,12 @@
             </v-card>
             <v-card flat>
               <v-card class="pt-4" color="#2e3637">
-                <div>
+                <div @click="modalCategorias = !modalCategorias">
                   <v-row class="pr-12 pl-12 pb-5 pt-1">
                     <v-icon class="pr-8 pt-3">mdi-bookmark-plus-outline</v-icon>
                     <v-chip
                       variant="outlined"
                       :color="categoriaSelecionada ? categoriaSelecionada.cor : 'white'"
-											@click="modalCategorias = !modalCategorias"
                     > <v-icon v-if="categoriaSelecionada" class="mr-2">{{ categoriaSelecionada.icone  }}</v-icon> {{ categoriaSelecionada ? categoriaSelecionada.descricao : 'Nenhuma' }}</v-chip>
                   </v-row>
                 </div>
@@ -258,8 +257,8 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="modalCategorias">
-      <v-card>
+      <v-dialog v-model="modalCategorias" height="400">
+      <v-card class="modal-categorias">
         <v-card-text>
           <v-list>
             <v-list-item
@@ -557,6 +556,14 @@ export default {
 .avatar-despesas {
   margin-top: 20px;
   margin-left: 10px;
+}
+
+.modal-categorias {
+	border-top-left-radius: 20px !important;
+	border-top-right-radius: 20px !important;
+	margin-bottom: -100px;
+	margin-left: -25px;
+	margin-right: -25px;
 }
 
 .descricao-despesa {
